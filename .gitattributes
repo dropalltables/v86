@@ -1,2 +1,5 @@
 lib/zstd/* linguist-vendored
 lib/softfloat/* linguist-vendored
+
+*.wasm binary
+*.bin binary
