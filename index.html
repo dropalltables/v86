@@ -8,6 +8,38 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="192.png">
 
+<script>
+(function() {
+    var panel = document.createElement("div");
+    panel.id = "dbg_console";
+    panel.style.cssText = "position:fixed;bottom:0;right:0;width:420px;max-height:260px;overflow-y:auto;background:rgba(0,0,0,.88);color:#0f0;font:11px/1.4 monospace;padding:6px;z-index:99999;display:none;box-sizing:border-box;border-top:1px solid #0f0;border-left:1px solid #0f0;word-break:break-all;";
+    var btn = document.createElement("button");
+    btn.textContent = "Console";
+    btn.style.cssText = "position:fixed;bottom:0;right:0;z-index:100000;font:11px monospace;padding:2px 6px;background:#000;color:#0f0;border:1px solid #0f0;cursor:pointer;";
+    btn.onclick = function() { panel.style.display = panel.style.display === "none" ? "block" : "none"; };
+    document.addEventListener("DOMContentLoaded", function() {
+        document.body.appendChild(panel);
+        document.body.appendChild(btn);
+    });
+    function append(type, args) {
+        var line = document.createElement("div");
+        line.style.color = type === "error" ? "#f55" : type === "warn" ? "#fa0" : "#0f0";
+        var ts = new Date().toISOString().substr(11,8);
+        try { line.textContent = "[" + ts + "][" + type + "] " + Array.from(args).map(function(a) { return typeof a === "object" ? JSON.stringify(a) : String(a); }).join(" "); }
+        catch(e) { line.textContent = "[" + ts + "][" + type + "] (unserializable)"; }
+        panel.appendChild(line);
+        panel.scrollTop = panel.scrollHeight;
+    }
+    var _log = console.log.bind(console);
+    var _warn = console.warn.bind(console);
+    var _error = console.error.bind(console);
+    console.log   = function() { _log.apply(console, arguments);   append("log",   arguments); };
+    console.warn  = function() { _warn.apply(console, arguments);  append("warn",  arguments); };
+    console.error = function() { _error.apply(console, arguments); append("error", arguments); };
+    window.addEventListener("error", function(e) { append("error", [e.message + " (" + e.filename + ":" + e.lineno + ")"]); });
+    window.addEventListener("unhandledrejection", function(e) { append("error", ["Unhandled promise rejection: " + e.reason]); });
+})();
+</script>
 <script src="build/v86_all.js?98e7110c2"></script>
 <link rel="stylesheet" href="v86.css">
 
