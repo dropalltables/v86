@@ -162,7 +162,7 @@ function onload()
     }
 
     const query_args = new URLSearchParams(location.search);
-    const host = query_args.get("cdn") || (ON_LOCALHOST ? "images/" : "//i.copy.sh/");
+    const host = query_args.get("cdn") || (ON_LOCALHOST ? "images/" : "/images/");
 
     // Abandonware OS images are from https://winworldpc.com/library/operating-systems
     const oses = [
